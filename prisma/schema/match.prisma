@@ -1,0 +1,74 @@
+model Match {
+    id        Int       @id @default(autoincrement())
+    contract  String? // TODO; docusign contract url
+    orgId     String? // TODO; clerk org id
+    familyId  Int
+    Family    Family    @relation(fields: [familyId], references: [id])
+    teamId    Int
+    Team      Team      @relation(fields: [teamId], references: [id])
+    packageId Int
+    Package   Package   @relation(fields: [packageId], references: [id])
+    meetings  Meeting[]
+}
+
+model Client {
+    id        Int     @id @default(autoincrement()) // TODO; use clerk id
+    isStudent Boolean // student or parent
+    firstName String
+    lastName  String
+    email     String  @unique
+    phone     String  @unique
+    Family    Family  @relation(fields: [familyId], references: [id])
+    familyId  Int
+
+    meetings Meeting[] @relation("_MeetingClient")
+}
+
+model Family {
+    id      Int      @id @default(autoincrement())
+    clients Client[]
+    matches Match[]
+}
+
+model Package {
+    id           Int      @id @default(autoincrement())
+    name         String
+    price        Decimal? // TODO; stripe price
+    meetings     Int      @default(0)
+    applications Int      @default(0) // consulting packages
+    drafts       Int      @default(0) // essay microservice
+    matches      Match[]
+}
+
+enum MentorType {
+    ADMIN
+    COUNSELOR
+    EDITOR
+    PROJECT_MANAGER
+}
+
+model Mentor {
+    id        Int        @id @default(autoincrement()) // TODO; use clerk id
+    firstName String
+    lastName  String
+    type      MentorType
+    teams     Team[]     @relation("_MentorTeam")
+    meetings  Meeting[]
+}
+
+model Team {
+    id      Int      @id @default(autoincrement())
+    mentors Mentor[] @relation("_MentorTeam")
+    matches Match[]
+}
+
+model Meeting {
+    id        Int      @id @default(autoincrement())
+    match     Match    @relation(fields: [matchId], references: [id])
+    matchId   Int
+    notes     String
+    date      DateTime // TODO; double check this
+    mentor    Mentor   @relation(fields: [mentorId], references: [id])
+    mentorId  Int
+    attendees Client[] @relation("_MeetingClient")
+}
