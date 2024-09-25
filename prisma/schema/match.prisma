@@ -21,7 +21,7 @@ model Client {
     Family    Family  @relation(fields: [familyId], references: [id])
     familyId  Int
 
-    meetings Meeting[] @relation("_MeetingClient")
+    meetings Meeting[] @relation("MeetingClient")
 }
 
 model Family {
@@ -52,13 +52,13 @@ model Mentor {
     firstName String
     lastName  String
     type      MentorType
-    teams     Team[]     @relation("_MentorTeam")
+    teams     Team[]     @relation("MentorTeam")
     meetings  Meeting[]
 }
 
 model Team {
     id      Int      @id @default(autoincrement())
-    mentors Mentor[] @relation("_MentorTeam")
+    mentors Mentor[] @relation("MentorTeam")
     matches Match[]
 }
 
@@ -70,5 +70,5 @@ model Meeting {
     date      DateTime // TODO; double check this
     mentor    Mentor   @relation(fields: [mentorId], references: [id])
     mentorId  Int
-    attendees Client[] @relation("_MeetingClient")
+    attendees Client[] @relation("MeetingClient")
 }
