@@ -1,27 +1,59 @@
+// do we account for discounts here?
 model Match {
-    id        Int       @id @default(autoincrement())
-    contract  String? // TODO; docusign contract url
-    orgId     String? // TODO; clerk org id
-    familyId  Int
-    Family    Family    @relation(fields: [familyId], references: [id])
-    teamId    Int
-    Team      Team      @relation(fields: [teamId], references: [id])
+    id Int @id @default(autoincrement())
+
+    orgId String? // TODO; clerk org id
+
+    familyId Int
+    Family   Family @relation(fields: [familyId], references: [id])
+
+    teamId Int
+    Team   Team @relation(fields: [teamId], references: [id])
+
+    contract String? // TODO; docusign contract url
+
     packageId Int
-    Package   Package   @relation(fields: [packageId], references: [id])
-    meetings  Meeting[]
+    Package   Package @relation(fields: [packageId], references: [id])
+
+    discounts    Discount[]
+    installments Installment[]
+
+    // meetings Meeting[]
+}
+
+model Discount {
+    id   Int    @id @default(autoincrement())
+    name String
+
+    amount     Decimal? // or percentage
+    percentage Int? // or amount
+
+    matches Match[]
+}
+
+model Installment {
+    id Int @id @default(autoincrement())
+
+    completed Boolean  @default(false)
+    amount    Decimal
+    due       DateTime
+
+    matchId Int
+    Match   Match @relation(fields: [matchId], references: [id])
 }
 
 model Client {
-    id        Int     @id @default(autoincrement()) // TODO; use clerk id
+    id        Int     @id // TODO; use clerk id
     isStudent Boolean // student or parent
+
     firstName String
     lastName  String
-    email     String  @unique
-    phone     String  @unique
-    Family    Family  @relation(fields: [familyId], references: [id])
-    familyId  Int
 
-    meetings Meeting[] @relation("MeetingClient")
+    email String? @unique
+    phone String? @unique
+
+    familyId Int
+    Family   Family @relation(fields: [familyId], references: [id])
 }
 
 model Family {
@@ -30,30 +62,33 @@ model Family {
     matches Match[]
 }
 
+// need to somehow modle for installments, discounts, etc
+// want to keep this modulized as well
 model Package {
-    id           Int      @id @default(autoincrement())
-    name         String
-    price        Decimal? // TODO; stripe price
-    meetings     Int      @default(0)
-    applications Int      @default(0) // consulting packages
-    drafts       Int      @default(0) // essay microservice
-    matches      Match[]
+    id    Int      @id @default(autoincrement())
+    name  String
+    price Decimal? // TODO; stripe price
+
+    counselorMeetings Int @default(0)
+
+    mentorMeetings Int @default(0)
+    mentors        Int @default(0)
+
+    essayId Int?
+    Essay   Essay? @relation(fields: [essayId], references: [id])
+
+    matches Match[]
 }
 
-enum MentorType {
-    ADMIN
-    COUNSELOR
-    EDITOR
-    PROJECT_MANAGER
-}
+model Essay {
+    id Int @id @default(autoincrement())
 
-model Mentor {
-    id        Int        @id @default(autoincrement()) // TODO; use clerk id
-    firstName String
-    lastName  String
-    type      MentorType
-    teams     Team[]     @relation("MentorTeam")
-    meetings  Meeting[]
+    personalBrand Boolean
+    standardApps  Int     @default(0)
+    premiumApps   Int     @default(0)
+    drafts        Int     @default(0) // essay microservice
+
+    packages Package[]
 }
 
 model Team {
@@ -62,13 +97,44 @@ model Team {
     matches Match[]
 }
 
-model Meeting {
-    id        Int      @id @default(autoincrement())
-    match     Match    @relation(fields: [matchId], references: [id])
-    matchId   Int
-    notes     String
-    date      DateTime // TODO; double check this
-    mentor    Mentor   @relation(fields: [mentorId], references: [id])
-    mentorId  Int
-    attendees Client[] @relation("MeetingClient")
+model Mentor {
+    id       Int    @id @default(autoincrement())
+    workerId Int
+    worker   Worker @relation(fields: [workerId], references: [id])
+    role     Roles
+
+    teams Team[] @relation("MentorTeam")
+
+    @@unique([workerId, role])
 }
+
+enum Roles {
+    ADMIN
+    COUNSELOR
+    EDITOR
+    PROJECT_MANAGER
+    APP_MANAGER
+    INTERNSHIP
+}
+
+model Worker {
+    id        Int      @id @default(autoincrement()) // TODO; use clerk id
+    firstName String
+    lastName  String
+    mentors   Mentor[]
+}
+
+// model Meeting {
+//     id        Int      @id @default(autoincrement())
+//     match     Match    @relation(fields: [matchId], references: [id])
+//     matchId   Int
+//     notes     String
+//     date      DateTime // TODO; double check this
+
+//     mentor    Mentor   @relation(fields: [mentorId], references: [id])
+//     mentorId  Int
+
+//     attendees Client[] @relation("MeetingClient")
+//     Worker    Worker?  @relation(fields: [workerId], references: [id])
+//     workerId  Int?
+// }
