@@ -15,6 +15,8 @@ model Match {
     packageId Int
     Package   Package @relation(fields: [packageId], references: [id])
 
+    // add projects; figure out the consumable patterns
+
     discounts    Discount[]
     installments Installment[]
 
@@ -76,9 +78,9 @@ model Package {
     essayId Int?
     Essay   Essay? @relation(fields: [essayId], references: [id])
 
-    // assume 1 project per package for now
-    projectId Int?
-    Project   Project? @relation(fields: [projectId], references: [id])
+    // assume 1 cohort per package for now
+    cohortId Int?
+    Cohort   Cohort? @relation(fields: [cohortId], references: [id])
 
     matches Match[]
 }
@@ -97,15 +99,15 @@ model Essay {
     @@unique([personalBrand, standardApps, premiumApps, drafts])
 }
 
-model Project {
+model Cohort {
     id Int @id @default(autoincrement())
 
-    cohorts           Int @default(0)
+    quantity          Int @default(0)
     meetingsPerCohort Int @default(0)
 
     packages Package[]
 
-    @@unique([cohorts, meetingsPerCohort])
+    @@unique([quantity, meetingsPerCohort])
 }
 
 model Team {
