@@ -32,8 +32,7 @@ model Discount {
 }
 
 model Installment {
-    id Int @id @default(autoincrement())
-
+    id        Int      @id @default(autoincrement())
     completed Boolean  @default(false)
     amount    Decimal
     due       DateTime
@@ -43,7 +42,7 @@ model Installment {
 }
 
 model Client {
-    id        Int     @id // TODO; use clerk id
+    id        Int     @id @default(autoincrement()) // TODO; use clerk id
     isStudent Boolean // student or parent
 
     firstName String
@@ -77,18 +76,36 @@ model Package {
     essayId Int?
     Essay   Essay? @relation(fields: [essayId], references: [id])
 
+    // assume 1 project per package for now
+    projectId Int?
+    Project   Project? @relation(fields: [projectId], references: [id])
+
     matches Match[]
 }
 
 model Essay {
-    id Int @id @default(autoincrement())
+    id   Int     @id @default(autoincrement())
+    name String?
 
-    personalBrand Boolean
-    standardApps  Int     @default(0)
-    premiumApps   Int     @default(0)
-    drafts        Int     @default(0) // essay microservice
+    personalBrand Boolean?
+    standardApps  Int?     @default(0)
+    premiumApps   Int?     @default(0)
+    drafts        Int?     @default(0) // essay microservice
 
     packages Package[]
+
+    @@unique([personalBrand, standardApps, premiumApps, drafts])
+}
+
+model Project {
+    id Int @id @default(autoincrement())
+
+    cohorts           Int @default(0)
+    meetingsPerCohort Int @default(0)
+
+    packages Package[]
+
+    @@unique([cohorts, meetingsPerCohort])
 }
 
 model Team {
@@ -118,10 +135,17 @@ enum Roles {
 }
 
 model Worker {
-    id        Int      @id @default(autoincrement()) // TODO; use clerk id
+    id        Int    @id @default(autoincrement()) // TODO; use clerk id
     firstName String
     lastName  String
-    mentors   Mentor[]
+
+    bio String
+
+    discord String?
+    email   String?
+    phone   String?
+
+    mentors Mentor[]
 }
 
 // model Meeting {
