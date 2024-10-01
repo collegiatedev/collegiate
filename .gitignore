@@ -46,5 +46,4 @@ yarn-error.log*
 .idea
 
 # scratch work
-scratch.txt
-data.txt
+/scratch
