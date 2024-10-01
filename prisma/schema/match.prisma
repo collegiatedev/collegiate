@@ -7,26 +7,29 @@ model Match {
     familyId Int
     Family   Family @relation(fields: [familyId], references: [id])
 
-    contract String? // TODO; docusign contract url
-
-    packageId Int
-    Package   Package @relation(fields: [packageId], references: [id])
-
-    // add projects; figure out the consumable patterns
-
-    discounts    Discount[]
-    installments Installment[]
-
     team   Team? @relation()
     teamId Int   @unique
+
+    // add me later, once team matching is done
+
+    // contract String? // TODO; docusign contract url
+
+    // packageId Int
+    // Package   Package @relation(fields: [packageId], references: [id])
+
+    // // add projects; figure out the consumable patterns
+
+    // discounts    Discount[]
+    // installments Installment[]
 }
 
+// easier to have a one-to-one relationship; we can change pattern to one-to-many later
 model Team {
     id      Int      @id @default(autoincrement())
     mentors Mentor[] @relation("MentorTeam")
 
-    match   Match @relation(fields: [matchId], references: [id])
     matchId Int   @unique
+    match   Match @relation(fields: [matchId], references: [id])
 }
 
 model Discount {
@@ -36,7 +39,7 @@ model Discount {
     amount     Decimal? // or percentage
     percentage Int? // or amount
 
-    matches Match[]
+    // matches Match[]
 }
 
 model Installment {
@@ -46,7 +49,7 @@ model Installment {
     due       DateTime
 
     matchId Int
-    Match   Match @relation(fields: [matchId], references: [id])
+    // Match   Match @relation(fields: [matchId], references: [id])
 }
 
 model Client {
@@ -88,7 +91,7 @@ model Package {
     cohortId Int?
     Cohort   Cohort? @relation(fields: [cohortId], references: [id])
 
-    matches Match[]
+    // matches Match[]
 }
 
 model Essay {
