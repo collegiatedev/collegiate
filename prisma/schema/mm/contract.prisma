@@ -1,0 +1,86 @@
+// defines the structure
+
+model Contract {
+    id  Int    @id @default(autoincrement())
+    url String // dochub, contract url
+
+    matchId Int   @unique
+    Match   Match @relation(fields: [matchId], references: [id])
+
+    discounts    Discount[]
+    installments Installment[]
+}
+
+model Discount {
+    id   Int    @id @default(autoincrement())
+    name String
+
+    isPercent Boolean // percentage or amount discount
+    amount    Decimal
+
+    contracts Contract[]
+}
+
+model Installment {
+    id     Int     @id @default(autoincrement())
+    amount Decimal
+
+    due       DateTime
+    completed Boolean  @default(false)
+
+    contractId Int
+    Contract   Contract @relation(fields: [contractId], references: [id])
+}
+
+model Package {
+    id    Int     @id @default(autoincrement())
+    name  String
+    price Decimal // TODO; stripe stuff
+
+    counselorMeetings Int @default(0)
+
+    essayId Int?
+    Essay   Essay? @relation(fields: [essayId], references: [id])
+
+    cohortId Int?
+    Cohort   Cohort? @relation(fields: [cohortId], references: [id])
+}
+
+model Essay {
+    id   Int     @id @default(autoincrement())
+    name String?
+
+    personalBrand Boolean?
+    standardApps  Int?     @default(0)
+    premiumApps   Int?     @default(0)
+    drafts        Int?     @default(0) // essay microservice
+
+    packages Package[]
+
+    @@unique([personalBrand, standardApps, premiumApps, drafts])
+}
+
+model Cohort {
+    id Int @id @default(autoincrement())
+
+    quantity          Int @default(0)
+    meetingsPerCohort Int @default(0)
+
+    packages Package[]
+
+    @@unique([quantity, meetingsPerCohort])
+}
+
+// look into this part
+
+// add me later, once team matching is done
+
+// contract String? // TODO; docusign contract url
+
+// packageId Int
+// Package   Package @relation(fields: [packageId], references: [id])
+
+// // add projects; figure out the consumable patterns
+
+// discounts    Discount[]
+// installments Installment[]
