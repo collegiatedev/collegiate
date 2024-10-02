@@ -1,0 +1,42 @@
+// largely static
+
+model Contract {
+    id Int @id @default(autoincrement())
+
+    total Int // total amount
+
+    url      String // dochub, contract url
+    isSigned Boolean @default(true) // assumption
+
+    startDate DateTime
+    endDate   DateTime
+
+    matchId Int   @unique
+    Match   Match @relation(fields: [matchId], references: [id])
+
+    extras       Extra[]
+    installments Installment[]
+}
+
+model Extra {
+    id   Int    @id @default(autoincrement())
+    name String
+
+    isDiscount Boolean // discount or bonus - positive or negative
+
+    isPercent Boolean // percentage or amount discount
+    amount    Decimal @default(0)
+
+    contracts Contract[]
+}
+
+model Installment {
+    id     Int     @id @default(autoincrement())
+    amount Decimal
+
+    due       DateTime
+    completed Boolean  @default(false)
+
+    contractId Int
+    Contract   Contract @relation(fields: [contractId], references: [id])
+}

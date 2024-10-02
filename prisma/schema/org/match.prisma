@@ -1,16 +1,14 @@
 model Match {
     id Int @id @default(autoincrement())
     // orgId String? // TODO; clerk org id
-
+    
     teamId Int
     Team   Team @relation(fields: [teamId], references: [id])
 
     familyId Int
     Family   Family @relation(fields: [familyId], references: [id])
 
-    // sales team, no contract needed
-    contractId Int?
-    Contract   Contract? @relation
+    contracts Contract[]
 
     @@unique([familyId, teamId])
 }
@@ -53,17 +51,18 @@ model Mentor {
 }
 
 model Worker {
-    id Int @id @default(autoincrement()) // TODO; use clerk id
+    id     Int  @id @default(autoincrement()) // TODO; use clerk id
+    userId Int
+    User   User @relation(fields: [userId], references: [id])
 
     bio     String
     discord String?
 
     mentors Mentor[]
-
-    userId Int
-    User   User @relation(fields: [userId], references: [id])
 }
 
+// editor, pm, internship, will require their own tables later
+// contractor based
 enum Roles {
     ADMIN
     COUNSELOR
@@ -92,6 +91,7 @@ enum Timezones {
     PT // Pacific Time
     CT // Central Time
     ET // Eastern Time
+    // Add more when necessary
 }
 
 // model Meeting {

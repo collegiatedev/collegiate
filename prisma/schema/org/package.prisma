@@ -1,36 +1,4 @@
-// defines the structure
-
-model Contract {
-    id  Int    @id @default(autoincrement())
-    url String // dochub, contract url
-
-    matchId Int   @unique
-    Match   Match @relation(fields: [matchId], references: [id])
-
-    discounts    Discount[]
-    installments Installment[]
-}
-
-model Discount {
-    id   Int    @id @default(autoincrement())
-    name String
-
-    isPercent Boolean // percentage or amount discount
-    amount    Decimal
-
-    contracts Contract[]
-}
-
-model Installment {
-    id     Int     @id @default(autoincrement())
-    amount Decimal
-
-    due       DateTime
-    completed Boolean  @default(false)
-
-    contractId Int
-    Contract   Contract @relation(fields: [contractId], references: [id])
-}
+// largely static
 
 model Package {
     id    Int     @id @default(autoincrement())
