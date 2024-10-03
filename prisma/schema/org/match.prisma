@@ -1,7 +1,7 @@
 model Match {
     id Int @id @default(autoincrement())
     // orgId String? // TODO; clerk org id
-    
+
     teamId Int
     Team   Team @relation(fields: [teamId], references: [id])
 
@@ -9,6 +9,8 @@ model Match {
     Family   Family @relation(fields: [familyId], references: [id])
 
     contracts Contract[]
+    packageId Int?
+    Package   Package? @relation(fields: [packageId], references: [id])
 
     @@unique([familyId, teamId])
 }
@@ -57,6 +59,7 @@ model Worker {
 
     bio     String
     discord String?
+    headshotUrl String? // TODO; uploadthing
 
     mentors Mentor[]
 }

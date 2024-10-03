@@ -12,6 +12,8 @@ model Package {
 
     cohortId Int?
     Cohort   Cohort? @relation(fields: [cohortId], references: [id])
+
+    matches Match[]
 }
 
 model Essay {

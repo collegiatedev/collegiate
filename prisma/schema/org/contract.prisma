@@ -1,11 +1,13 @@
 // largely static
 
+// Contract model makes sense for client side rn
+// but we likely need to think about how to setup worker side
 model Contract {
     id Int @id @default(autoincrement())
 
-    total Int // total amount
+    total Decimal // total cost
 
-    url      String // dochub, contract url
+    url      String @unique // dochub, contract url
     isSigned Boolean @default(true) // assumption
 
     startDate DateTime
@@ -21,11 +23,11 @@ model Contract {
 model Extra {
     id   Int    @id @default(autoincrement())
     name String
-
+    
+    amount    Decimal @default(0) // TODO; must be non-negative, constraint
     isDiscount Boolean // discount or bonus - positive or negative
-
-    isPercent Boolean // percentage or amount discount
-    amount    Decimal @default(0)
+    isPercent Boolean // percentage or lump-sum
+    
 
     contracts Contract[]
 }
