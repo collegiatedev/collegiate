@@ -1,100 +1,100 @@
 model Match {
-    id Int @id @default(autoincrement())
-    // orgId String? // TODO; clerk org id
+  id Int @id @default(autoincrement())
+  // orgId String? // TODO; clerk org id
 
-    teamId Int
-    Team   Team @relation(fields: [teamId], references: [id])
+  teamId Int
+  Team   Team @relation(fields: [teamId], references: [id])
 
-    familyId Int
-    Family   Family @relation(fields: [familyId], references: [id])
+  familyId Int
+  Family   Family @relation(fields: [familyId], references: [id])
 
-    contracts Contract[]
-    packageId Int?
-    Package   Package? @relation(fields: [packageId], references: [id])
+  contracts Contract[]
+  packageId Int?
+  Package   Package?   @relation(fields: [packageId], references: [id])
 
-    @@unique([familyId, teamId])
+  @@unique([familyId, teamId])
 }
 
 model Family {
-    id      Int      @id @default(autoincrement())
-    clients Client[]
-    matches Match[]
+  id      Int      @id @default(autoincrement())
+  clients Client[]
+  matches Match[]
 }
 
 model Client {
-    id Int @id @default(autoincrement()) // TODO; use clerk id
+  id Int @id @default(autoincrement()) // TODO; use clerk id
 
-    isStudent Boolean // student or parent
+  isStudent Boolean // student or parent
 
-    userId Int
-    User   User @relation(fields: [userId], references: [id])
+  userId Int
+  User   User @relation(fields: [userId], references: [id])
 
-    familyId Int
-    Family   Family @relation(fields: [familyId], references: [id])
+  familyId Int
+  Family   Family @relation(fields: [familyId], references: [id])
 }
 
 model Team {
-    id      Int      @id @default(autoincrement())
-    mentors Mentor[] @relation("MentorTeam")
-    matches Match[]
+  id      Int      @id @default(autoincrement())
+  mentors Mentor[] @relation("MentorTeam")
+  matches Match[]
 }
 
 model Mentor {
-    id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-    role Roles
+  role Roles
 
-    workerId Int
-    worker   Worker @relation(fields: [workerId], references: [id])
+  workerId Int
+  worker   Worker @relation(fields: [workerId], references: [id])
 
-    teams Team[] @relation("MentorTeam")
+  teams Team[] @relation("MentorTeam")
 
-    @@unique([workerId, role])
+  @@unique([workerId, role])
 }
 
 model Worker {
-    id     Int  @id @default(autoincrement()) // TODO; use clerk id
-    userId Int
-    User   User @relation(fields: [userId], references: [id])
+  id     Int  @id @default(autoincrement()) // TODO; use clerk id
+  userId Int
+  User   User @relation(fields: [userId], references: [id])
 
-    bio     String
-    discord String?
-    headshotUrl String? // TODO; uploadthing
+  bio         String
+  discord     String?
+  headshotUrl String? // TODO; uploadthing
 
-    mentors Mentor[]
+  mentors Mentor[]
 }
 
 // editor, pm, internship, will require their own tables later
 // contractor based
 enum Roles {
-    ADMIN
-    COUNSELOR
-    EDITOR
-    PROJECT_MANAGER
-    APP_MANAGER
-    INTERNSHIP
+  ADMIN
+  COUNSELOR
+  EDITOR
+  PROJECT_MANAGER
+  APP_MANAGER
+  INTERNSHIP
 }
 
 model User {
-    id Int @id @default(autoincrement()) // TODO; use clerk id
+  id Int @id @default(autoincrement()) // TODO; use clerk id
 
-    firstName String
-    lastName  String
+  firstName String
+  lastName  String
 
-    email String? @unique
-    phone String? @unique
+  email String? @unique
+  phone String? @unique
 
-    timezone Timezones
+  timezone Timezones
 
-    Worker Worker[]
-    Client Client[]
+  Worker Worker[]
+  Client Client[]
 }
 
 enum Timezones {
-    PT // Pacific Time
-    CT // Central Time
-    ET // Eastern Time
-    // Add more when necessary
+  PT // Pacific Time
+  CT // Central Time
+  ET // Eastern Time
+  // Add more when necessary
 }
 
 // model Meeting {

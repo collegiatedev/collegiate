@@ -3,42 +3,41 @@
 // Contract model makes sense for client side rn
 // but we likely need to think about how to setup worker side
 model Contract {
-    id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-    total Decimal // total cost
+  total Decimal // total cost
 
-    url      String @unique // dochub, contract url
-    isSigned Boolean @default(true) // assumption
+  url      String  @unique // dochub, contract url
+  isSigned Boolean @default(true) // assumption
 
-    startDate DateTime
-    endDate   DateTime
+  startDate DateTime
+  endDate   DateTime
 
-    matchId Int   @unique
-    Match   Match @relation(fields: [matchId], references: [id])
+  matchId Int   @unique
+  Match   Match @relation(fields: [matchId], references: [id])
 
-    extras       Extra[]
-    installments Installment[]
+  extras       Extra[]
+  installments Installment[]
 }
 
 model Extra {
-    id   Int    @id @default(autoincrement())
-    name String
-    
-    amount    Decimal @default(0) // TODO; must be non-negative, constraint
-    isDiscount Boolean // discount or bonus - positive or negative
-    isPercent Boolean // percentage or lump-sum
-    
+  id   Int    @id @default(autoincrement())
+  name String
 
-    contracts Contract[]
+  amount     Decimal @default(0) // TODO; must be non-negative, constraint
+  isDiscount Boolean // discount or bonus - positive or negative
+  isPercent  Boolean // percentage or lump-sum
+
+  contracts Contract[]
 }
 
 model Installment {
-    id     Int     @id @default(autoincrement())
-    amount Decimal
+  id     Int     @id @default(autoincrement())
+  amount Decimal
 
-    due       DateTime
-    completed Boolean  @default(false)
+  due       DateTime
+  completed Boolean  @default(false)
 
-    contractId Int
-    Contract   Contract @relation(fields: [contractId], references: [id])
+  contractId Int
+  Contract   Contract @relation(fields: [contractId], references: [id])
 }

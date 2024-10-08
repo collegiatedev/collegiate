@@ -1,45 +1,48 @@
 // largely static
 
 model Package {
-    id    Int     @id @default(autoincrement())
-    name  String
-    price Decimal // TODO; stripe stuff
+  id    Int     @id @default(autoincrement())
+  name  String
 
-    counselorMeetings Int @default(0)
+  counselorMeetings Int @default(0)
 
-    essayId Int?
-    Essay   Essay? @relation(fields: [essayId], references: [id])
+  personalBrand     Boolean
+  personalStatement Boolean
 
-    cohortId Int?
-    Cohort   Cohort? @relation(fields: [cohortId], references: [id])
+  standardApps Int @default(0)
+  premiumApps  Int @default(0)
+//   drafts       Int @default(0)
 
-    matches Match[]
+  cohorts           Int @default(0)
+  meetingsPerCohort Int @default(0)
+
+  matches Match[]
 }
 
-model Essay {
-    id   Int     @id @default(autoincrement())
-    name String?
+// model Essay {
+//     id   Int     @id @default(autoincrement())
+//     name String?
 
-    personalBrand Boolean?
-    standardApps  Int?     @default(0)
-    premiumApps   Int?     @default(0)
-    drafts        Int?     @default(0) // essay microservice
+//     personalBrand Boolean?
+//     standardApps  Int?     @default(0)
+//     premiumApps   Int?     @default(0)
+//     drafts        Int?     @default(0) // essay microservice
 
-    packages Package[]
+//     packages Package[]
 
-    @@unique([personalBrand, standardApps, premiumApps, drafts])
-}
+//     @@unique([personalBrand, standardApps, premiumApps, drafts])
+// }
 
-model Cohort {
-    id Int @id @default(autoincrement())
+// model Cohort {
+//     id Int @id @default(autoincrement())
 
-    quantity          Int @default(0)
-    meetingsPerCohort Int @default(0)
+//     quantity          Int @default(0)
+//     meetingsPerCohort Int @default(0)
 
-    packages Package[]
+//     packages Package[]
 
-    @@unique([quantity, meetingsPerCohort])
-}
+//     @@unique([quantity, meetingsPerCohort])
+// }
 
 // look into this part
 
